@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5fa">
+  <meta name="description" content="Интерактивная карта доставки в Алматы. Сравните две стратегии распределения заказов при сбое.">
+  <title>Dispatch Map — карта диспетчера</title>
+  <link rel="icon" href="mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="symbols" aria-hidden="true">
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.5 5H16a3 3 0 0 1 0 6H8a4 4 0 0 0 0 8h7.5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4v10l-9 4-9-4V7Z"/><path d="m3 7 9 4 9-4m-9 4v10M7.5 5l9 4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-bike" viewBox="0 0 24 24"><circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="m5.5 16.5 5-8 3 8h-8m8 0 4-8h-3m-5 0h3m5 0 1 8"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2 6M4 5v6h6"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="m13 2-8 12h6l-1 8 9-12h-6l1-8Z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10c0 4-7 10-7 10S5 14 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L19 7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.8 19h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></symbol>
+  </svg>
+  <a class="skip" href="#workspace">К карте</a>
+  <header class="topbar">
+    <div class="shell top-inner">
+      <a class="brand" href="./" aria-label="Dispatch Map, начало">
+        <img src="mark.svg" width="36" height="36" alt="">
+        <span>Dispatch<span class="brand-accent">.</span><small>Лаборатория маршрутов</small></span>
+      </a>
+      <div class="top-status"><span class="status-dot"></span> Демо-режим</div>
+    </div>
+  </header>
+
+  <main class="shell main">
+    <section class="intro" aria-labelledby="title">
+      <div>
+        <div class="eyebrow"><span></span> УПРАВЛЕНИЕ ДОСТАВКОЙ</div>
+        <h1 id="title">Карта диспетчера</h1>
+        <p>Планируйте доставку в Алматы и проверяйте, что произойдёт при сбое.</p>
+      </div>
+      <div class="main-actions">
+        <button id="reset" class="button secondary" type="button"><svg class="icon"><use href="#i-reset"/></svg> Сбросить</button>
+        <button id="outage" class="button primary" type="button"><svg class="icon"><use href="#i-zap"/></svg> <span>Сбой курьера</span></button>
+      </div>
+    </section>
+
+    <section class="kpis" id="kpis" aria-label="Показатели смены"></section>
+
+    <div class="workspace" id="workspace">
+      <section class="panel map-panel" aria-labelledby="map-title">
+        <header class="panel-header">
+          <div><h2 id="map-title">Карта маршрутов</h2><p>Алматы, Есентай и Коктем <span>·</span> Смена 10:00</p></div>
+          <fieldset class="switch strategy">
+            <legend class="sr-only">Стратегия перераспределения</legend>
+            <label><input name="strategy" type="radio" value="deadline" checked><span>По срокам</span></label>
+            <label><input name="strategy" type="radio" value="nearest"><span>Ближайший</span></label>
+          </fieldset>
+        </header>
+        <div class="map-wrap">
+          <svg id="map" viewBox="0 0 960 687" role="group" aria-label="Карта Алматы и маршруты доставки">
+            <image id="base-map" href="almaty-base.svg" width="960" height="687" aria-hidden="true"/>
+            <g id="routes" aria-hidden="true"></g>
+            <g id="markers"></g>
+          </svg>
+          <div class="map-place"><svg class="icon"><use href="#i-pin"/></svg> Алматы <span>КАЗАХСТАН</span></div>
+          <div class="map-tools" aria-label="Масштаб карты">
+            <button id="zoom-in" type="button" aria-label="Приблизить" title="Приблизить"><svg class="icon"><use href="#i-plus"/></svg></button>
+            <button id="zoom-out" type="button" aria-label="Отдалить" title="Отдалить"><svg class="icon"><use href="#i-minus"/></svg></button>
+            <button id="zoom-fit" type="button" aria-label="Показать всю карту" title="Показать всю карту"><svg class="icon"><use href="#i-fit"/></svg></button>
+          </div>
+          <div id="map-selection" class="map-selection" hidden></div>
+          <div class="scale" aria-hidden="true"><span id="scale-line"></span> 500 м</div>
+          <a class="map-attribution" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>
+        </div>
+        <footer class="map-legend">
+          <span><i class="legend-route"></i> Маршрут</span><span><i class="legend-stop"></i> Заказ</span><span><i class="legend-late"></i> Риск опоздания</span>
+          <span class="legend-drag">Приблизьте и перетащите карту</span>
+        </footer>
+      </section>
+
+      <aside class="panel fleet-panel" aria-labelledby="fleet-title">
+        <header class="panel-header">
+          <div><h2 id="fleet-title">Курьеры</h2><p>Выберите курьера на карте или в списке</p></div>
+          <span class="count-pill" id="fleet-count">4</span>
+        </header>
+        <div class="fleet-list" id="fleet"></div>
+        <div id="scenario" class="scenario"></div>
+      </aside>
+    </div>
+
+    <section class="panel orders-panel" aria-labelledby="orders-title">
+      <header class="panel-header">
+        <div><h2 id="orders-title">Заказы смены</h2><p>Прогноз прибытия и назначение на маршрут</p></div>
+        <fieldset class="switch filters">
+          <legend class="sr-only">Фильтр заказов</legend>
+          <label><input name="filter" type="radio" value="all" checked><span>Все</span></label>
+          <label><input name="filter" type="radio" value="late"><span>Под риском</span></label>
+          <label><input name="filter" type="radio" value="moved"><span>Переданы</span></label>
+        </fieldset>
+      </header>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Заказ</th><th>Курьер</th><th>К сроку</th><th>Прогноз</th><th>Статус</th></tr></thead>
+          <tbody id="orders"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span><svg class="icon"><use href="#i-info"/></svg> Карта Алматы реальная. Курьеры, заказы и сроки заданы для симуляции.</span>
+      <details><summary>Как считаются маршруты</summary><p>Пути проходят по доступным участкам сети OpenStreetMap с учётом направления движения в данных. Время оценивается по расстоянию, заданной скорости курьера и 3 минутам на остановку. «По срокам» в первую очередь сокращает число опозданий. «Ближайший» добавляет заказ в конец маршрута курьера с ближайшей точкой старта.</p></details>
+    </footer>
+  </main>
+  <div id="live" class="sr-only" aria-live="polite"></div>
+</body>
+</html>
