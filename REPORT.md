@@ -4,6 +4,10 @@
 
 When a courier drops out at the start of a shift, does inserting the affected orders into existing routes reduce late deliveries compared with assigning them to the nearest courier?
 
+![Dispatch Map showing the Almaty routes after Mira drops out, with two orders at risk in the deadline-aware plan and three in the nearest-courier plan](docs/almaty-outage.jpg)
+
+*Mira's outage in the dashboard. The map shows the deadline-aware plan after all three orders are reassigned. The comparison cards show both strategies.*
+
 ## Setup
 
 - The [road graph](dist/almaty-data.mjs) contains 7,563 nodes and 15,189 directed edges derived from OpenStreetMap in Almaty, near Esentai, Koktem, KazNU, and the Botanical Garden.

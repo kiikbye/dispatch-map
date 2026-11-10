@@ -2,6 +2,8 @@
 
 An interactive dispatch simulator that reroutes deliveries when a courier drops out. It covers a real section of Almaty around the Esentai River, Koktem, Al-Farabi Kazakh National University, and the Botanical Garden. Couriers, orders, and deadlines are simulated. The Russian-language dashboard shows projected arrival times, late deliveries, route distance, and reassigned orders.
 
+![Dispatch Map dashboard showing revised courier routes in Almaty and the two strategies after a courier outage](docs/almaty-outage.jpg)
+
 ## Run
 
 ```sh
