@@ -19,6 +19,8 @@ Open [localhost:8080](http://localhost:8080). The demo uses static files and has
 
 With Mira's default outage, deadline-aware insertion produces 2 late deliveries and 30 total late minutes. Nearest courier produces 3 late deliveries and 38 total late minutes in the same simulated shift. In this scenario, the shorter-delay plan covers 11.10 km compared with 10.92 km for the nearest-courier plan.
 
+[Read the evaluation report](REPORT.md) for the comparison across all four courier outages and the commands to reproduce it.
+
 ## Routing model
 
 Dijkstra's algorithm finds shortest paths in the connected portion of a directed graph derived from OpenStreetMap roads and bicycle paths. The graph respects access and one-way tags at the way level. Couriers have fixed speeds and room for at most six deliveries. Each stop adds three minutes of service time. The baseline assigns each displaced order to the nearest eligible courier's starting location and appends it to their route.
